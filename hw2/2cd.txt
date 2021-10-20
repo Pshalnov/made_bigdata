@@ -1,0 +1,50 @@
+2c)
+
+WITH top_tags AS (
+SELECT tag, count(tag) AS tag_count 
+FROM (
+SELECT * 
+FROM artists 
+LATERAL VIEW explode(split(tags_lastfm, "; ")) tags AS tag
+WHERE tag <> '') AS tag_table 
+GROUP BY tag 
+ORDER BY tag_count DESC 
+LIMIT 10
+), top_artists AS (
+SELECT * 
+FROM (
+SELECT * 
+FROM artists 
+LATERAL VIEW explode(split(tags_lastfm, "; ")) tags AS tag
+WHERE tag <> ''
+) AS tag_table 
+WHERE tag
+IN (SELECT tag FROM top_tag)
+)
+SELECT artist_lastfm, max(scrobbles_lastfm) AS scrobbles
+FROM top_artists
+GROUP BY artist_lastfm
+ORDER BY scrobbles DESC
+LIMIT 3;
+
+
+
+The Beatles
+
+Radiohead
+
+Coldplay
+
+
+
+2d) Найти страну группы Coldplay
+
+SELECT country_lastfm
+
+FROM artists
+
+WHERE artist_lastfm in ('Coldplay')
+
+
+
+United Kingdom
